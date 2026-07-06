@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>ASCENSÃO</title>
+<link rel="icon" href="assets/icon-512.png">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ================= CONTADOR ================= -->
+  <section class="tab-page active" data-page="contador">
+    <header class="top">
+      <h1 class="brand">ASCENSÃO</h1>
+      <p class="brand-sub">Da lama ao topo, dia sim dia não</p>
+    </header>
+
+    <div class="quick-actions">
+      <button class="pill" id="btnNiveis">🏆 Meus Níveis</button>
+      <button class="pill" id="btnComunidade">Comunidade</button>
+    </div>
+
+    <div class="rank-wrap">
+      <div class="rank-photo" id="rankPhoto"><img id="rankImg" src="" alt=""></div>
+      <div class="rank-name" id="rankName">—</div>
+      <div class="rank-cat" id="rankCat">—</div>
+    </div>
+
+    <div class="timer-block">
+      <button class="side-btn cfg" id="btnConfig" title="Ajuste seu tempo">⚙️</button>
+
+      <div class="ring">
+        <svg viewBox="0 0 200 200">
+          <circle class="ring-bg" cx="100" cy="100" r="90"/>
+          <circle class="ring-fg" id="ringFg" cx="100" cy="100" r="90"/>
+        </svg>
+        <div class="ring-center">
+          <div class="clock" id="clock">00:00:00</div>
+          <div class="status"><span class="dot"></span>Em Andamento</div>
+          <div class="total-box">
+            <span class="total-label">Tempo Total</span>
+            <span class="total-val" id="totalTime">0d 0h 0m</span>
+          </div>
+          <div class="pct" id="dayPct">0%</div>
+          <div class="pct-label">do dia completo</div>
+        </div>
+      </div>
+
+      <button class="side-btn reset" id="btnReset" title="Reset">↺</button>
+    </div>
+
+    <div class="side-labels">
+      <span class="lbl-left">Ajuste seu tempo</span>
+      <span class="lbl-right">Reset</span>
+    </div>
+
+    <div class="streak">
+      <div class="streak-title">↗ Sequência Atual</div>
+      <div class="streak-num"><span id="streakDays">0</span> 🔥</div>
+    </div>
+
+    <div class="next-level" id="nextLevel"></div>
+  </section>
+
+  <!-- ================= NÍVEIS ================= -->
+  <section class="tab-page" data-page="niveis">
+    <header class="top">
+      <h1 class="brand">🏆 Meus Níveis</h1>
+      <p class="brand-sub" id="niveisSub">0 de 100 desbloqueados</p>
+    </header>
+
+    <div class="stats-row">
+      <div class="stat"><b id="statDias">0</b><span>DIAS</span></div>
+      <div class="stat-sep"></div>
+      <div class="stat"><b id="statNiveis">0</b><span>NÍVEIS</span></div>
+    </div>
+
+    <div class="current-card">
+      <div class="cc-title">Nível Atual</div>
+      <div class="cc-body">
+        <div class="cc-photo"><img id="ccImg" src="" alt=""></div>
+        <div class="cc-text">
+          <div class="cc-name" id="ccName">—</div>
+          <div class="cc-sub" id="ccSub">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="niveisList"></div>
+  </section>
+
+  <!-- ================= HUMOR ================= -->
+  <section class="tab-page" data-page="humor">
+    <header class="top"><h1 class="brand">😊 Humor</h1><p class="brand-sub">Como você está hoje?</p></header>
+    <div class="mood-grid" id="moodGrid"></div>
+    <div class="mood-log" id="moodLog"></div>
+  </section>
+
+  <!-- ================= CHAT ================= -->
+  <section class="tab-page" data-page="chat">
+    <header class="top"><h1 class="brand">💬 Motivação</h1><p class="brand-sub">Frases pra segurar a onda</p></header>
+    <div id="motivBox" class="motiv-box"></div>
+    <button class="pill big" id="btnNovaFrase">Nova frase 🔥</button>
+  </section>
+
+  <!-- ================= PERFIL ================= -->
+  <section class="tab-page" data-page="perfil">
+    <header class="top"><h1 class="brand">👤 Perfil</h1><p class="brand-sub">Sua jornada</p></header>
+    <div class="perfil-card">
+      <div class="pf-row"><span>Início da jornada</span><b id="pfInicio">—</b></div>
+      <div class="pf-row"><span>Sequência atual</span><b id="pfStreak">0 dias</b></div>
+      <div class="pf-row"><span>Melhor sequência</span><b id="pfRecord">0 dias</b></div>
+      <div class="pf-row"><span>Total de resets</span><b id="pfResets">0</b></div>
+      <div class="pf-row"><span>Nível atual</span><b id="pfNivel">1 / 100</b></div>
+    </div>
+    <button class="pill" id="btnNotif">🔔 Ativar lembrete diário</button>
+    <button class="pill danger" id="btnHardReset">Zerar tudo</button>
+    <p class="foot">ASCENSÃO · da lama ao topo.</p>
+  </section>
+
+  <!-- ================= NAV ================= -->
+  <nav class="tabbar">
+    <button class="tab active" data-go="contador"><span>⏱</span>Contador</button>
+    <button class="tab" data-go="niveis"><span>🏆</span>Níveis</button>
+    <button class="tab" data-go="humor"><span>😊</span>Humor</button>
+    <button class="tab" data-go="chat"><span>💬</span>Chat</button>
+    <button class="tab" data-go="perfil"><span>👤</span>Perfil</button>
+  </nav>
+
+</div>
+
+<!-- Modal genérico -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
+
+<script src="niveis.js"></script>
+<script src="app.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
