@@ -1,5 +1,5 @@
 /* ASCENSÃO — service worker (cache offline + notificações) */
-const CACHE = 'ascensao-v2';
+const CACHE = 'ascensao-v3';
 const CORE = [
   'index.html', 'style.css', 'app.js', 'niveis.js', 'manifest.json',
   'assets/icon-192.png', 'assets/icon-512.png'
@@ -20,7 +20,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   e.respondWith(
-    fetch(e.request).then(resp => {
+    fetch(e.request, { cache: 'reload' }).then(resp => {
       const copy = resp.clone();
       caches.open(CACHE).then(c => c.put(e.request, copy)).catch(() => {});
       return resp;
