@@ -5,7 +5,9 @@ const DAY = 86400000;
 const TOTAL_NIVEIS = NIVEIS.length; // 100
 
 /* ---------- estado ---------- */
-const DEFAULT = { inicio: Date.now(), recorde: 0, resets: 0, humores: {} };
+// Jornada iniciada em 06/07/2026 (dia 1). Em 08/07 = dia 3.
+const START = new Date(2026, 6, 6, 0, 0, 0).getTime();
+const DEFAULT = { inicio: START, recorde: 0, resets: 0, humores: {} };
 let state = load();
 
 function load() {
@@ -13,7 +15,7 @@ function load() {
     const s = JSON.parse(localStorage.getItem('vicioZero'));
     if (s && s.inicio) return Object.assign({}, DEFAULT, s);
   } catch (e) {}
-  const fresh = Object.assign({}, DEFAULT, { inicio: Date.now() });
+  const fresh = Object.assign({}, DEFAULT, { inicio: START });
   localStorage.setItem('vicioZero', JSON.stringify(fresh));
   return fresh;
 }
