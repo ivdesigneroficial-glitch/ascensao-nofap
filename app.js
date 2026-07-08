@@ -45,10 +45,10 @@ function renderContador() {
   const s = totalSec % 60;
   $('#clock').textContent = `${fmt2(h)}:${fmt2(m)}:${fmt2(s)}`;
 
-  const d = diasCompletos();
+  // dia 1-indexado (voce esta NO dia X) + horas dentro do dia atual
   const totH = Math.floor((ms % DAY) / 3600000);
   const totM = Math.floor((ms % 3600000) / 60000);
-  $('#totalTime').textContent = `${d}d ${totH}h ${totM}m`;
+  $('#totalTime').textContent = `${diaAtual()}d ${totH}h ${totM}m`;
 
   // progresso do dia atual (0-100)
   const dayProg = (ms % DAY) / DAY;

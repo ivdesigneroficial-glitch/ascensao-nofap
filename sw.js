@@ -1,5 +1,5 @@
 /* ASCENSÃO — service worker (cache offline + notificações) */
-const CACHE = 'ascensao-v5';
+const CACHE = 'ascensao-v6';
 const CORE = [
   'index.html', 'style.css', 'app.js', 'niveis.js', 'manifest.json',
   'assets/icon-192.png', 'assets/icon-512.png'
