@@ -1,5 +1,5 @@
 /* ASCENSÃO — service worker (cache offline + notificações) */
-const CACHE = 'ascensao-v6';
+const CACHE = 'ascensao-v7';
 const CORE = [
   'index.html', 'style.css', 'app.js', 'niveis.js', 'manifest.json',
   'assets/icon-192.png', 'assets/icon-512.png'
@@ -39,6 +39,24 @@ self.addEventListener('message', e => {
       tag: 'ascensao-diario',
       renotify: true
     });
+  }
+});
+
+// notificacao automatica diaria em segundo plano (best-effort; Chrome/Android)
+const FRASES_SW = [
+  'Mais um dia de foco. Mantenha sua sequência viva! 🔥',
+  'A urge dura minutos, o orgulho dura pra sempre. Segue firme!',
+  'Disciplina hoje, orgulho amanhã. Bora pro próximo nível!',
+  'Guerreiro não recua. Confirme mais um dia de vitória.',
+  'Você contra você — e você está ganhando. Continue!'
+];
+self.addEventListener('periodicsync', e => {
+  if (e.tag === 'lembrete-diario') {
+    const body = FRASES_SW[Math.floor(Math.random() * FRASES_SW.length)];
+    e.waitUntil(self.registration.showNotification('🔥 ASCENSÃO', {
+      body, icon: 'assets/icon-192.png', badge: 'assets/icon-192.png',
+      tag: 'ascensao-diario', renotify: true
+    }));
   }
 });
 

@@ -142,7 +142,27 @@ const FRASES = [
   'Transmute a energia. Treine, crie, conquiste.',
   'O homem que você quer ser está do outro lado do "não".',
   'Foco. Cada nível desbloqueado é uma versão sua mais forte.',
-  'Ninguém vai fazer por você. E é exatamente por isso que você vai.'
+  'Ninguém vai fazer por você. E é exatamente por isso que você vai.',
+  'Disciplina é escolher o que você quer MAIS em vez do que quer AGORA.',
+  'A dor da disciplina pesa gramas. A dor do arrependimento pesa toneladas.',
+  'Toda vez que você resiste, seu cérebro se reconstrói mais forte.',
+  'Você já foi mais fraco e sobreviveu. Agora você é o predador.',
+  'Não negocie com a urge. Negociar já é meio caminho pra perder.',
+  'Frio na barriga? Bom. É o corpo entendendo que você virou o jogo.',
+  'Cabeça erguida, olhar de quem não deve nada pra ninguém.',
+  'Enquanto uns cedem, você forja. Essa é a diferença.',
+  'O topo é solitário porque poucos aguentam o preço. Você aguenta.',
+  'Energia acumulada não some — vira músculo, foco e presença.',
+  'Seja tão disciplinado que a preguiça tenha medo de você.',
+  'Cada "não" hoje é um "sim" pro homem que você está construindo.',
+  'Não é sobre nunca cair. É sobre nunca ficar caído.',
+  'Você contra você. E você vai ganhar.',
+  'Fecha os olhos, respira fundo, e lembra: você é mais forte que isso.',
+  'O Supremo Absoluto começou exatamente onde você está agora.',
+  'Guerreiro não foge da batalha interna. Ele a domina.',
+  'Constância vence intensidade. Aparece todo santo dia.',
+  'Sua palavra vale? Então prove pra única pessoa que importa: você.',
+  'Mete braça. O amanhã é construído no que você faz hoje.'
 ];
 function novaFrase() {
   $('#motivBox').textContent = FRASES[Math.floor(Math.random() * FRASES.length)];
@@ -273,6 +293,7 @@ function ativarNotificacoes() {
     if (p === 'granted') {
       state.ultimoLembrete = null; save();
       dispararNotif();
+      registrarSyncPeriodico();
       modal({ title: '🔔 Lembretes ativados!', body: 'Você vai receber um lembrete diário pra manter o foco e avisos quando subir de nível.', ok: false });
       atualizarBtnNotif();
     } else {
@@ -287,6 +308,76 @@ function atualizarBtnNotif() {
 }
 $('#btnNotif').onclick = ativarNotificacoes;
 
+function atualizarBtnSom() {
+  const b = $('#btnSom'); if (!b) return;
+  b.textContent = state.somOff ? '🔇 Som ao subir de nível: Desligado' : '🔊 Som ao subir de nível: Ligado';
+}
+$('#btnSom').onclick = () => {
+  state.somOff = !state.somOff; save(); atualizarBtnSom();
+  if (!state.somOff) tocarFanfarra(); // toca de amostra ao ligar
+};
+
+// notificacao automatica em segundo plano (Chrome/Android, best-effort)
+async function registrarSyncPeriodico() {
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    if (!('periodicSync' in reg)) return;
+    const st = await navigator.permissions.query({ name: 'periodic-background-sync' });
+    if (st.state === 'granted') {
+      await reg.periodicSync.register('lembrete-diario', { minInterval: 12 * 60 * 60 * 1000 });
+    }
+  } catch (e) {}
+}
+
+/* ---------- SOM (fanfarra sintetizada) ---------- */
+let audioCtx = null;
+function tocarFanfarra() {
+  if (state.somOff) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = audioCtx;
+    if (ctx.state === 'suspended') ctx.resume();
+    const now = ctx.currentTime;
+    const notas = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6 — acorde ascendente
+    notas.forEach((f, i) => {
+      const t = now + i * 0.12;
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(f, t);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.4, t + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
+      osc.connect(g).connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.5);
+    });
+  } catch (e) {}
+}
+
+/* ---------- SUBIU DE NÍVEL ---------- */
+function checarLevelUp() {
+  const atual = nivelAtual().nivel;
+  if (state.ultimoNivelVisto == null) { state.ultimoNivelVisto = atual; save(); return; }
+  if (atual > state.ultimoNivelVisto) {
+    state.ultimoNivelVisto = atual; save();
+    celebrarNivel(nivelAtual());
+  }
+}
+function celebrarNivel(nv) {
+  tocarFanfarra();
+  if (navigator.vibrate) navigator.vibrate([90, 50, 140]);
+  refreshAll();
+  modal({
+    title: '🔓 NÍVEL DESBLOQUEADO!',
+    body: `<div style="text-align:center">
+      <img src="${nv.img}" style="width:130px;height:130px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);margin:4px auto 14px;box-shadow:0 0 24px rgba(245,197,24,.5)">
+      <div style="font-size:24px;font-weight:800;color:var(--gold)">${nv.titulo}</div>
+      <div style="color:var(--muted);margin-top:4px">${nv.categoria} · Nível ${nv.nivel} de ${TOTAL_NIVEIS}</div>
+      <div style="margin-top:14px;color:#fff">Você evoluiu, guerreiro. Mete braça! 🔥</div>
+    </div>`, ok: false
+  });
+}
+
 /* ---------- LOOP ---------- */
 function refreshAll() {
   renderContador(); renderNiveis(); renderHumor(); renderPerfil();
@@ -294,5 +385,9 @@ function refreshAll() {
 refreshAll();
 novaFrase();
 atualizarBtnNotif();
+atualizarBtnSom();
 checarLembreteDiario();
+checarLevelUp();
+if ('Notification' in window && Notification.permission === 'granted') registrarSyncPeriodico();
 setInterval(renderContador, 1000);
+setInterval(checarLevelUp, 30000); // detecta virada de nível com o app aberto
