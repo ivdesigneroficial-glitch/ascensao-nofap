@@ -104,7 +104,7 @@ const NIVEIS = [
     "categoriaNum": 3,
     "subNum": 2,
     "titulo": "Urge Sobrevivida",
-    "img": "assets/niveis/nivel-012.png",
+    "img": "assets/niveis/nivel-012.jpg",
     "diaDesbloqueio": 23
   },
   {
@@ -320,7 +320,7 @@ const NIVEIS = [
     "categoriaNum": 8,
     "subNum": 1,
     "titulo": "Instinto Predatório",
-    "img": "assets/niveis/nivel-036.png",
+    "img": "assets/niveis/nivel-036.jpg",
     "diaDesbloqueio": 71
   },
   {
