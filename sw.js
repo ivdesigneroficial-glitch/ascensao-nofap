@@ -1,5 +1,5 @@
 /* ASCENSÃO — service worker (cache offline + notificações) */
-const CACHE = 'ascensao-v1';
+const CACHE = 'ascensao-v2';
 const CORE = [
   'index.html', 'style.css', 'app.js', 'niveis.js', 'manifest.json',
   'assets/icon-192.png', 'assets/icon-512.png'
@@ -16,14 +16,15 @@ self.addEventListener('activate', e => {
   );
 });
 
+// network-first: sempre tenta a versao mais nova; cache so como reserva offline
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request).then(resp => {
+    fetch(e.request).then(resp => {
       const copy = resp.clone();
       caches.open(CACHE).then(c => c.put(e.request, copy)).catch(() => {});
       return resp;
-    }).catch(() => caches.match('index.html')))
+    }).catch(() => caches.match(e.request).then(r => r || caches.match('index.html')))
   );
 });
 
