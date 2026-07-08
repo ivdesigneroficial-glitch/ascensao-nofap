@@ -56,7 +56,7 @@ function renderContador() {
   const C = 565.48;
   $('#ringFg').style.strokeDashoffset = C * (1 - dayProg);
 
-  $('#streakDays').textContent = d;
+  $('#streakDays').textContent = diaAtual();
 
   const nv = nivelAtual();
   $('#rankImg').src = nv.img;
@@ -81,7 +81,7 @@ function renderNiveis() {
   const desbloq = niveisDesbloqueados();
   const atualIdx = nivelIndex();
   $('#niveisSub').textContent = `${desbloq} de ${TOTAL_NIVEIS} desbloqueados`;
-  $('#statDias').textContent = diasCompletos();
+  $('#statDias').textContent = diaAtual();
   $('#statNiveis').textContent = desbloq;
 
   const nv = nivelAtual();
@@ -150,11 +150,11 @@ function novaFrase() {
 
 /* ---------- PERFIL ---------- */
 function renderPerfil() {
-  const d = diasCompletos();
+  const d = diaAtual();
   const recorde = Math.max(state.recorde, d);
   $('#pfInicio').textContent = new Date(state.inicio).toLocaleDateString('pt-BR');
-  $('#pfStreak').textContent = d + ' dias';
-  $('#pfRecord').textContent = recorde + ' dias';
+  $('#pfStreak').textContent = 'Dia ' + d;
+  $('#pfRecord').textContent = 'Dia ' + recorde;
   $('#pfResets').textContent = state.resets;
   $('#pfNivel').textContent = `${nivelAtual().nivel} / ${TOTAL_NIVEIS}`;
 }
@@ -187,7 +187,7 @@ $('#btnReset').onclick = () => modal({
   body: 'Isso zera seu contador atual e conta como uma recaída. Sua sequência volta pro dia 0.',
   okLabel: 'Sim, resetar', danger: true,
   onOk: () => {
-    state.recorde = Math.max(state.recorde, diasCompletos());
+    state.recorde = Math.max(state.recorde, diaAtual());
     state.resets++;
     state.inicio = Date.now();
     save(); closeModal(); refreshAll();
